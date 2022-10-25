@@ -3,11 +3,9 @@
 <suite name="Restassured suite">
 	<groups>
 		<run>
-			<include name="LoadProperties" />
+			<include name="ValuesInitialization" />
 		</run>
 	</groups>
-	<parameter name="clientname" value="test27" />
-	<parameter name="clientmail" value="test27@gmail.com" />
 
 	<test name="Background_test">
 		<groups>
