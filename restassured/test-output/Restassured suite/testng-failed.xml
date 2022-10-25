@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Restassured suite]" guice-stage="DEVELOPMENT">
+  <parameter name="clientmail" value="test25@gmail.com"/>
+  <parameter name="clientname" value="test25"/>
+  <test thread-count="5" name="Background_test(failed)">
+    <groups>
+      <run>
+        <include name="Background"/>
+        <include name="LoadProperties"/>
+      </run>
+    </groups>
+    <classes>
+      <class name="com.rest.PostMethods">
+        <methods>
+          <include name="register_newAPI_Client" invocation-numbers="0"/>
+          <include name="loadProperties"/>
+        </methods>
+      </class> <!-- com.rest.PostMethods -->
+    </classes>
+  </test> <!-- Background_test(failed) -->
+  <test thread-count="5" name="Scenario3_test(failed)">
+    <parameter name="productid" value="productid"/>
+    <parameter name="replaced_product" value="true"/>
+    <groups>
+      <run>
+        <include name="CreateOrder"/>
+        <include name="LoadProperties"/>
+      </run>
+    </groups>
+    <classes>
+      <class name="com.rest.PostMethods">
+        <methods>
+          <include name="create_new_order" invocation-numbers="0"/>
+          <include name="loadProperties"/>
+        </methods>
+      </class> <!-- com.rest.PostMethods -->
+      <class name="com.rest.GetMethods">
+        <methods>
+          <include name="loadProperties"/>
+          <include name="get_Orders_First"/>
+          <include name="get_Orders_After_ItemAdded" invocation-numbers="0"/>
+        </methods>
+      </class> <!-- com.rest.GetMethods -->
+    </classes>
+  </test> <!-- Scenario3_test(failed) -->
+</suite> <!-- Failed suite [Restassured suite] -->

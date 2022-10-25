@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Restassured suite">
+	<groups>
+		<run>
+			<include name="LoadProperties" />
+		</run>
+	</groups>
+	<parameter name="clientname" value="test27" />
+	<parameter name="clientmail" value="test27@gmail.com" />
+
+	<test name="Background_test">
+		<groups>
+			<run>
+				<include name="Background" />
+			</run>
+		</groups>
+		<classes>
+			<class name="com.rest.GetMethods"></class>
+			<class name="com.rest.PostMethods"></class>
+		</classes>
+	</test>
+
+
+	<test name="Scenario1_test">
+		<parameter name="size" value="1" />
+		<groups>
+			<run>
+				<include name="AddCart" />
+			</run>
+		</groups>
+		<classes>
+			<class name="com.rest.GetMethods"></class>
+			<class name="com.rest.PostMethods"></class>
+		</classes>
+	</test>
+
+
+	<test name="Scenario2_test">
+		<parameter name="quantity" value="2" />
+		<groups>
+			<run>
+				<include name="ReplaceItem" />
+			</run>
+		</groups>
+		<classes>
+			<class name="com.rest.GetMethods"></class>
+			<class name="com.rest.PostMethods"></class>
+		</classes>
+	</test>
+
+	<test name="Scenario3_test">
+		<parameter name="replaced_product" value="true" />
+		<parameter name="productid" value="productid" />
+		<groups>
+			<run>
+				<include name="CreateOrder" />
+			</run>
+		</groups>
+		<classes>
+			<class name="com.rest.GetMethods"></class>
+			<class name="com.rest.PostMethods"></class>
+		</classes>
+	</test>
+
+</suite> 
