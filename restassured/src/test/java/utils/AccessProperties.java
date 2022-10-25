@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
@@ -16,7 +18,8 @@ public class AccessProperties {
 	public static Properties prop;
 	public static FileInputStream file;
 	public static ArrayList<Integer> productIDs;
-	public static HashMap<String, String> reg;
+	public static LinkedHashMap<Integer, Integer> products;
+	public static ArrayList<Integer> IDs;
 	public static final String filepath = "D:\\Eclipse_restassured\\restassured\\src\\test\\resources\\accessTokens.properties";
 	
 	public static String accessToken;
@@ -50,6 +53,7 @@ public class AccessProperties {
 
 	@BeforeSuite(groups = {"ValuesInitialization"})
 	public static void loadProperties() {
+		products = new LinkedHashMap<>();
 		prop = new Properties();
 		try {
 			file = new FileInputStream(filepath);

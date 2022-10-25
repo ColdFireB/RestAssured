@@ -100,14 +100,14 @@ public class PostMethods extends AccessProperties{
 		System.out.println("Add new Item to the cart---<<"  + method.getName()+">>" );
 		System.out.println("------------------------------------------------------");
 		
-		writeProperties("productID", (productIDs.get(1)).toString());
+		//writeProperties("productID", (productIDs.get(1)).toString());
 		
 		Response res = given().
 			log().all().
 		 	baseUri("https://simple-grocery-store-api.glitch.me").
 		when().
 		    body("{\r\n"
-				+ "   \"productId\":" +productIDs.get(1)+"\r\n"
+				+ "   \"productId\":" +productID+"\r\n"
 				+ "}").
 		    contentType(ContentType.JSON).
 			post("/carts/"+ cartId + "/items").

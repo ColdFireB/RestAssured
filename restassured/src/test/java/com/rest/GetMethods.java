@@ -3,15 +3,12 @@ package com.rest;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 import static org.testng.Assert.assertEquals;
-
 import java.lang.reflect.Method;
-
+import java.util.Random;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-
-import groovy.cli.Option;
 import io.restassured.response.Response;
 import utils.AccessProperties;
 
@@ -70,7 +67,6 @@ public class GetMethods extends AccessProperties{
 		
 		//set any one productID
 		writeProperties("productID", productIDs.get(1).toString());
-
 	}	
 	
 	@Test(groups = {"Background"}, priority = 3)
@@ -89,24 +85,53 @@ public class GetMethods extends AccessProperties{
 			body("id", is(equalTo(Integer.parseInt(productID))));
 	}
 	
+	@Test(groups = {"Background"}, priority = 4 )
+	public void store_ProductID_StockValue(@Optional Method method) {
+		System.out.println("------------------------------------------------------");
+		System.out.println("--------Stroring Product ID and Stock in HashMap---------<<" + method.getName()  + ">>");
+		System.out.println("------------------------------------------------------");
+		
+		for(int id: productIDs) {
+			Response res = given().
+				 	baseUri("https://simple-grocery-store-api.glitch.me").
+				when().
+					get("/products/"+ id ).
+				then().
+				log().all().
+				assertThat().
+				statusCode(200).
+					body("id", is(id)).extract().response();
+			
+			products.put(id, (Integer) res.path("current-stock"));
+		}		
+	}
+
+	public String getProductStock(int index) {
+		return products.get(productIDs.get(index)).toString();
+	}
+	
+	public int randomproductIndex() {
+		Random rand = new Random();
+		return rand.nextInt(2, productIDs.size());		
+	}
 
 	@Test(groups = {"ReplaceItem"})
 	public void get_Product_Stock(@Optional Method method) {
 		System.out.println("------------------------------------------------------");
 		System.out.println("--------Get Product's current stock---------<<" + method.getName()  + ">>");
 		System.out.println("------------------------------------------------------");
-		writeProperties("ReplacedproductID", (productIDs.get(4)).toString());
-		Response res = given().
+		writeProperties("ReplacedproductID",  productIDs.get(randomproductIndex()).toString());
+		given().
 		 	baseUri("https://simple-grocery-store-api.glitch.me").
 		when().
 			get("/products/"+ ReplacedproductID).
 		then().
-		log().all().
-		assertThat().
-		statusCode(200).
-			body("id", is(equalTo(Integer.parseInt(ReplacedproductID)))).extract().response();
+			log().all().
+			assertThat().
+			statusCode(200).
+			body("id", is(equalTo(Integer.parseInt(ReplacedproductID))));
 		
-		writeProperties("ReplacedProduct_Stock", res.path("current-stock").toString());
+		writeProperties("ReplacedProduct_Stock", getProductStock(randomproductIndex()).toString());
 	}
 	
 	@Test(groups= {"AddCart"}, priority = 3, dependsOnMethods = {"com.rest.PostMethods.Add_ItemTo_cart","com.rest.PostMethods.create_cart"})
