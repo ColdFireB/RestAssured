@@ -11,15 +11,16 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import groovy.cli.Option;
 import io.restassured.response.Response;
 import utils.AccessProperties;
 
 public class GetMethods extends AccessProperties{
 
+	
 	@BeforeClass
 	public void Beforeclass(){
 		System.out.println("Executing before class method" + getClass());
+
 	}
 	
 	@Test(groups = {"Background"},priority = 1)
@@ -28,12 +29,10 @@ public class GetMethods extends AccessProperties{
 		System.out.println("-----Get status of the application-------<<" + method.getName()  + ">>");
 		System.out.println("------------------------------------------------------");
 		
-		String status = given().
-		 	baseUri("https://simple-grocery-store-api.glitch.me").
+		String status = given().spec(requestSpecification).
 		when().
 			get("/status").
-		then().
-		log().all().
+		then().spec(responseSpecification_200).
 		assertThat().
 		statusCode(200).
 		extract().response().path("status");
@@ -53,14 +52,11 @@ public class GetMethods extends AccessProperties{
 		System.out.println("------Get list of products---------<<" + method.getName()  + ">>");
 		System.out.println("------------------------------------------------------");
 		
-		productIDs = given().
-		 	baseUri("https://simple-grocery-store-api.glitch.me").
+		productIDs = given().spec(requestSpecification).
 		when().
 			get("/products").
-		then().
-		log().all().
+		then().spec(responseSpecification_200).
 		assertThat().
-		statusCode(200).
 		body("category", hasItem("meat-seafood"),
 				"name", hasItem("Fresh Spinach Organic"),
 				"id", hasItems(4643, 4646, 4641, 1225, 3674, 2585, 5851, 8739, 2177, 1709, 1709, 7395, 8554, 6483, 5774, 8753, 9482, 5477, 5478, 4875)).
@@ -78,14 +74,11 @@ public class GetMethods extends AccessProperties{
 		System.out.println("------------------------------------------------------");
 		System.out.println("--------Get Product details-----------<<" + method.getName()  + ">>");
 		System.out.println("------------------------------------------------------");
-		given().
-		 	baseUri("https://simple-grocery-store-api.glitch.me").
+		given().spec(requestSpecification).
 		when().
 			get("/products/"+productID).
-		then().
-		log().all().
+		then().spec(responseSpecification_200).
 		assertThat().
-		statusCode(200).
 			body("id", is(equalTo(Integer.parseInt(productID))));
 	}
 	
@@ -96,14 +89,11 @@ public class GetMethods extends AccessProperties{
 		System.out.println("--------Get Product's current stock---------<<" + method.getName()  + ">>");
 		System.out.println("------------------------------------------------------");
 		writeProperties("ReplacedproductID", (productIDs.get(4)).toString());
-		Response res = given().
-		 	baseUri("https://simple-grocery-store-api.glitch.me").
+		Response res = given().spec(requestSpecification).
 		when().
 			get("/products/"+ ReplacedproductID).
-		then().
-		log().all().
+		then().spec(responseSpecification_200).
 		assertThat().
-		statusCode(200).
 			body("id", is(equalTo(Integer.parseInt(ReplacedproductID)))).extract().response();
 		
 		writeProperties("ReplacedProduct_Stock", res.path("current-stock").toString());
@@ -115,14 +105,12 @@ public class GetMethods extends AccessProperties{
 		System.out.println("--------get cart items-----------<<" + method.getName()  + ">>");
 		System.out.println("------------------------------------------------------");
 		
-		Response res = given().
-		 	baseUri("https://simple-grocery-store-api.glitch.me").
+		Response res = given().spec(requestSpecification).
 		when().
 			get("/carts/"+ cartId +"/items").
-		then().
-		log().all().
+		then().spec(responseSpecification_200).
 		assertThat().
-		statusCode(200).extract().response();
+		extract().response();
 		
 		System.out.println(res.path("productId"));
 		System.out.println(res.path("id"));
@@ -136,14 +124,11 @@ public class GetMethods extends AccessProperties{
 		System.out.println("--------Get cart using CartID-----------<<" + method.getName()  + ">>");
 		System.out.println("------------------------------------------------------");
 		
-		Response res = given().
-		 	baseUri("https://simple-grocery-store-api.glitch.me").
+		Response res = given().spec(requestSpecification).
 		when().
 			get("/carts/"+ cartId).
-		then().
-		log().all().
+		then().spec(responseSpecification_200).
 		assertThat().
-		statusCode(200).
 		body("items", hasSize(size)). 
 		extract().response();
 		
@@ -152,15 +137,11 @@ public class GetMethods extends AccessProperties{
 	
 	@Test(groups = {"CreateOrder"}, priority = 1)
 	public void get_Orders_First() {
-		given().
-		 	baseUri("https://simple-grocery-store-api.glitch.me").
+		given().spec(requestSpecification).
 		 	headers("Authorization", "Bearer " + accessToken).
 		when().
 			get("/Orders").
-		then().
-		log().all().
-		assertThat().
-		statusCode(200);
+		then().spec(responseSpecification_200);
 	}
 	
 	@Parameters({"replaced_product"})
@@ -176,15 +157,12 @@ public class GetMethods extends AccessProperties{
 			id = Integer.parseInt(productID);	
 		}
 		
-		Response res = given().
-		 	baseUri("https://simple-grocery-store-api.glitch.me").
+		Response res = given().spec(requestSpecification).
 		 	headers("Authorization", "Bearer " + accessToken).
 		when().
 			get("/Orders").
-		then().
-		log().all().
+		then().spec(responseSpecification_200).
 		assertThat().
-		statusCode(200).
 		body("customerName", hasItem(clientName),
 				"items[0].productId[0]", is(equalTo(id))).extract().response();
 		

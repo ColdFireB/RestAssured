@@ -1,5 +1,7 @@
 package utils;
 
+import static io.restassured.RestAssured.given;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,6 +12,12 @@ import java.util.Random;
 
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
+
+import io.restassured.RestAssured;
+import io.restassured.filter.log.LogDetail;
+import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
+import io.restassured.specification.ResponseSpecification;
 
 public class AccessProperties {
 
@@ -29,6 +37,10 @@ public class AccessProperties {
 	public static String ReplacedproductID;
 	public static String clientName;
 	public static String clientEmail;
+	
+	public static RequestSpecification requestSpecification;
+	public static ResponseSpecification responseSpecification_200;
+	public static ResponseSpecification responseSpecification;
 
 	public static void writeProperties(String key, String value) {
 		prop = new Properties();
@@ -60,7 +72,24 @@ public class AccessProperties {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}		
+		
+		requestSpecification = given().
+				log().all().
+				baseUri("https://simple-grocery-store-api.glitch.me").
+				contentType(ContentType.JSON);
+		
+		responseSpecification_200 = RestAssured.expect().
+				log().all().
+				//log().headers().
+				//log().body().
+				contentType(ContentType.JSON).
+				statusCode(200);
+		
+		responseSpecification = RestAssured.expect().
+				log().all();
+				//log().headers().
+				//log().body();
 	}
 	
 	public static void storePropertiesValues(String key) {
@@ -114,7 +143,7 @@ public class AccessProperties {
 	public static void init_UserDetails() {
 		
 		Random ran = new Random();
-		int random_num = ran.nextInt(30, 1000);
+		int random_num = ran.nextInt(1000);
 		
 		clientName = "User"+random_num;
 		clientEmail = clientName + "@gmail.com";

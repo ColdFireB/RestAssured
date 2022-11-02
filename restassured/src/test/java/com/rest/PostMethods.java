@@ -17,11 +17,13 @@ import utils.AccessProperties;
 
 public class PostMethods extends AccessProperties{
 	
+	
 	@BeforeClass
 	public void beforeClass() {
 		System.out.println("------------------------------------------------------");
 		System.out.println("Executing beforeclass method");
 		System.out.println("------------------------------------------------------");
+
 	}
 	
 	@Test(groups = {"NegativieScenario"})
@@ -29,18 +31,14 @@ public class PostMethods extends AccessProperties{
 		System.out.println("------------------------------------------------------");
 		System.out.println("--------Register Existing API-----------<<" + method.getName()  + ">>");
 		System.out.println("------------------------------------------------------");
-		given().
-			log().all().
-		 	baseUri("https://simple-grocery-store-api.glitch.me").
-		 	contentType(ContentType.JSON).
+		given().spec(requestSpecification).
 		 	body("{\r\n"
 		 			+ "   \"clientName\": \"Bala\",\r\n"
 		 			+ "   \"clientEmail\": \"balaece1991@gmail.com\"\r\n"
 		 			+ "}").
 		when().
 			post("/api-clients").
-		then().
-		log().all().
+		then().spec(responseSpecification).
 		assertThat().
 		statusCode(409).
 		body("error", is(equalTo("API client already registered. Try a different email.")));
@@ -53,18 +51,14 @@ public class PostMethods extends AccessProperties{
 		System.out.println("Register NEW API Client--Invoking Method---<<"  + method.getName()+">>" );
 		System.out.println("------------------------------------------------------");
 		
-		Response res = given().
-			log().all().
-		 	baseUri("https://simple-grocery-store-api.glitch.me").
-		 	contentType(ContentType.JSON).
+		Response res =  given().spec(requestSpecification).
 		 	body("{\r\n"
 		 			+ "   \"clientName\": \""+clientName +"\",\r\n"
 		 			+ "   \"clientEmail\":\""+ clientEmail+"\"\r\n"
 		 			+ "}").
 		when().
 			post("/api-clients").
-		then().
-		log().all().
+		then().spec(responseSpecification).
 		assertThat().
 		statusCode(201).extract().response();
 		
@@ -78,13 +72,10 @@ public class PostMethods extends AccessProperties{
 		System.out.println("------------------------------------------------------");
 		System.out.println("Create Cart---<<"  + method.getName()+">>" );
 		System.out.println("------------------------------------------------------");
-		Response res = given().
-			log().all().
-		 	baseUri("https://simple-grocery-store-api.glitch.me").
+		Response res = given().spec(requestSpecification).
 		when().
 			post("/carts").
-		then().
-			log().all().
+		then().spec(responseSpecification).
 			assertThat().
 			statusCode(201).
 			body("created", equalTo(true)). 
@@ -102,9 +93,7 @@ public class PostMethods extends AccessProperties{
 		
 		writeProperties("productID", (productIDs.get(1)).toString());
 		
-		Response res = given().
-			log().all().
-		 	baseUri("https://simple-grocery-store-api.glitch.me").
+		Response res = given().spec(requestSpecification).
 		when().
 		    body("{\r\n"
 				+ "   \"productId\":" +productIDs.get(1)+"\r\n"
@@ -112,8 +101,7 @@ public class PostMethods extends AccessProperties{
 		    contentType(ContentType.JSON).
 			post("/carts/"+ cartId + "/items").
 			
-		then().
-			log().all().
+		then().spec(responseSpecification).
 			assertThat().
 			statusCode(201).
 			body("created", is(true)).
@@ -131,11 +119,8 @@ public class PostMethods extends AccessProperties{
 		System.out.println("Create New Order---<<"  + method.getName()+">>" );
 		System.out.println("------------------------------------------------------");
 		
-		Response res = given().
-			log().all().
+		Response res = given().spec(requestSpecification).
 			header("Authorization", "Bearer "+ accessToken).
-		 	baseUri("https://simple-grocery-store-api.glitch.me").
-		 	
 		when().
 		    body("{\r\n"
 		    		+ "    \"cartId\":"+ "\"" + cartId +"\""+",\r\n"
@@ -143,8 +128,7 @@ public class PostMethods extends AccessProperties{
 		    		+ "}").
 		    contentType(ContentType.JSON).
 			post("/Orders").			
-		then().
-			log().all().
+		then().spec(responseSpecification).
 			assertThat().
 			statusCode(201).
 			body("created", is(true)).
@@ -166,11 +150,8 @@ public class PostMethods extends AccessProperties{
 		if(quantity<=quantity_prop) {
 			writeProperties("ReplacedQuanitity", Integer.toString(quantity));
 			
-			given().
-				log().all().
-				header("Authorization", "Bearer "+ accessToken).
-			 	baseUri("https://simple-grocery-store-api.glitch.me").
-			 	
+			given().spec(requestSpecification).
+				header("Authorization", "Bearer "+ accessToken). 	
 			when().
 			    body("    {\r\n"
 			    		+ "        \"productId\":"+ ReplacedproductID +",\r\n"
@@ -178,8 +159,7 @@ public class PostMethods extends AccessProperties{
 			    		+ "    }").
 			    contentType(ContentType.JSON).
 				put("/carts/"+ cartId +"/items/"+ itemId).			
-			then().
-				log().all().
+			then().spec(responseSpecification).
 				assertThat().
 				statusCode(204);	
 		}
