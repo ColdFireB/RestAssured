@@ -114,7 +114,7 @@ public class AccessProperties {
 	public static void init_UserDetails() {
 		
 		Random ran = new Random();
-		int random_num = ran.nextInt(30, 1000);
+		int random_num = ran.nextInt(1000);
 		
 		clientName = "User"+random_num;
 		clientEmail = clientName + "@gmail.com";
