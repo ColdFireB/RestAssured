@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
@@ -13,15 +15,15 @@ import org.testng.annotations.Test;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 import utils.AccessProperties;
 
 public class PostMethods extends AccessProperties{
-	
 	@BeforeClass
 	public void beforeClass() {
 		System.out.println("------------------------------------------------------");
 		System.out.println("Executing beforeclass method");
-		System.out.println("------------------------------------------------------");
+		System.out.println("------------------------------------------------------");		
 	}
 	
 	@Test(groups = {"NegativieScenario"})
@@ -102,10 +104,16 @@ public class PostMethods extends AccessProperties{
 		
 		//writeProperties("productID", (productIDs.get(1)).toString());
 		
+		Set<String> headers = new HashSet<String>();
+		headers.add("Authorization");
+		
 		Response res = given().
-			log().all().
 		 	baseUri("https://simple-grocery-store-api.glitch.me").
-		when().
+		 	log().body().
+		 	//config(config.logconfig(LogConfig.logConfig().enableLoggingOfRequestAndResponseIfValidationFails())).
+		 	//config(config.logConfig(LogConfig.logConfig().blacklistHeader("Bearer"))).
+		 	//config(config.logConfig(LogConfig.logConfig().blacklistHeaders(headers))).
+		 	when().
 		    body("{\r\n"
 				+ "   \"productId\":" +productID+"\r\n"
 				+ "}").
@@ -144,7 +152,7 @@ public class PostMethods extends AccessProperties{
 		    contentType(ContentType.JSON).
 			post("/Orders").			
 		then().
-			log().all().
+			log().ifValidationFails().
 			assertThat().
 			statusCode(201).
 			body("created", is(true)).

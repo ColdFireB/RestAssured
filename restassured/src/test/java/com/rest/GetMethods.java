@@ -112,7 +112,7 @@ public class GetMethods extends AccessProperties{
 	
 	public int randomproductIndex() {
 		Random rand = new Random();
-		return rand.nextInt(2, productIDs.size());		
+		return rand.nextInt(productIDs.size());		
 	}
 
 	@Test(groups = {"ReplaceItem"})
@@ -149,7 +149,7 @@ public class GetMethods extends AccessProperties{
 		assertThat().
 		statusCode(200).extract().response();
 		
-		System.out.println(res.path("productId"));
+		System.out.print(res.path("productId"));
 		System.out.println(res.path("id"));
 	}
 	

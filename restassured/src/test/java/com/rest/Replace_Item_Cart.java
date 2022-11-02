@@ -27,7 +27,7 @@ public class Replace_Item_Cart extends AccessProperties{
 		    contentType(ContentType.JSON).
 			put("/carts/"+prop.getProperty("cartId")+"/items/"+149565337).			
 		then().
-			log().all().
+			log().body().
 			assertThat().
 			statusCode(201).
 			body("created", is(true)).
