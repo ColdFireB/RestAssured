@@ -3,15 +3,11 @@ package com.rest;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-
 import java.lang.reflect.Method;
-
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import utils.AccessProperties;
 
@@ -28,14 +24,16 @@ public class PostMethods extends AccessProperties{
 	
 	@Test(groups = {"NegativieScenario"})
 	public void register_ExistingAPI_Client(@Optional Method method) {
+		
+		String payload = "{\r\n"
+	 			+ "   \"clientName\": \"Bala\",\r\n"
+	 			+ "   \"clientEmail\": \"balaece1991@gmail.com\"\r\n"
+	 			+ "}";
 		System.out.println("------------------------------------------------------");
 		System.out.println("--------Register Existing API-----------<<" + method.getName()  + ">>");
 		System.out.println("------------------------------------------------------");
 		given().spec(requestSpecification).
-		 	body("{\r\n"
-		 			+ "   \"clientName\": \"Bala\",\r\n"
-		 			+ "   \"clientEmail\": \"balaece1991@gmail.com\"\r\n"
-		 			+ "}").
+		 	body(payload).
 		when().
 			post("/api-clients").
 		then().spec(responseSpecification).
@@ -47,15 +45,17 @@ public class PostMethods extends AccessProperties{
 
 	@Test(groups = {"Background"}, priority = 4)
 	public void register_newAPI_Client(@Optional Method method) {
+		
+		String payload = "{\r\n"
+	 			+ "   \"clientName\": \""+clientName +"\",\r\n"
+	 			+ "   \"clientEmail\":\""+ clientEmail+"\"\r\n"
+	 			+ "}";
 		System.out.println("------------------------------------------------------");
 		System.out.println("Register NEW API Client--Invoking Method---<<"  + method.getName()+">>" );
 		System.out.println("------------------------------------------------------");
 		
 		Response res =  given().spec(requestSpecification).
-		 	body("{\r\n"
-		 			+ "   \"clientName\": \""+clientName +"\",\r\n"
-		 			+ "   \"clientEmail\":\""+ clientEmail+"\"\r\n"
-		 			+ "}").
+		 	body(payload).
 		when().
 			post("/api-clients").
 		then().spec(responseSpecification).
@@ -64,6 +64,7 @@ public class PostMethods extends AccessProperties{
 		
 		accessToken = res.path("accessToken");
 		writeProperties("accessToken",accessToken);
+		bearerToken = "Bearer "+ accessToken;
 	}
 	
 	@Test(groups= {"AddCart"}, priority = 1)
@@ -86,6 +87,9 @@ public class PostMethods extends AccessProperties{
 	
 	@Test(dependsOnMethods = "com.rest.GetMethods.get_ListOfProducts",groups= {"AddCart"}, priority = 2)
 	public void Add_ItemTo_cart(@Optional Method method) {
+		String payload = "{\r\n"
+				+ "   \"productId\":" +productIDs.get(1)+"\r\n"
+				+ "}";
 		
 		System.out.println("------------------------------------------------------");
 		System.out.println("Add new Item to the cart---<<"  + method.getName()+">>" );
@@ -95,10 +99,7 @@ public class PostMethods extends AccessProperties{
 		
 		Response res = given().spec(requestSpecification).
 		when().
-		    body("{\r\n"
-				+ "   \"productId\":" +productIDs.get(1)+"\r\n"
-				+ "}").
-		    contentType(ContentType.JSON).
+		    body(payload).
 			post("/carts/"+ cartId + "/items").
 			
 		then().spec(responseSpecification).
@@ -115,18 +116,19 @@ public class PostMethods extends AccessProperties{
 	@Test(groups = {"CreateOrder"}, priority = 2)
 	public void create_new_order(@Optional Method method) {
 		
+		String payload = "{\r\n"
+	    		+ "    \"cartId\":"+ "\"" + cartId +"\""+",\r\n"
+	    		+ "    \"customerName\":" +"\"" +clientName+ "\"" + "\r\n"
+	    		+ "}";
+		
 		System.out.println("------------------------------------------------------");
 		System.out.println("Create New Order---<<"  + method.getName()+">>" );
 		System.out.println("------------------------------------------------------");
 		
 		Response res = given().spec(requestSpecification).
-			header("Authorization", "Bearer "+ accessToken).
+			header("Authorization", bearerToken).
 		when().
-		    body("{\r\n"
-		    		+ "    \"cartId\":"+ "\"" + cartId +"\""+",\r\n"
-		    		+ "    \"customerName\":" +"\"" +clientName+ "\"" + "\r\n"
-		    		+ "}").
-		    contentType(ContentType.JSON).
+		    body(payload).
 			post("/Orders").			
 		then().spec(responseSpecification).
 			assertThat().
@@ -142,6 +144,11 @@ public class PostMethods extends AccessProperties{
 	@Test(groups = {"ReplaceItem"}, dependsOnMethods = {"com.rest.GetMethods.get_ListOfProducts", "com.rest.GetMethods.get_Product_Stock"})
 	public void replace_item_inCart(int quantity, @Optional Method method) {
 		
+		String payload = "    {\r\n"
+	    		+ "        \"productId\":"+ ReplacedproductID +",\r\n"
+	    		+ "        \"quantity\":"+ quantity + "\r\n"
+	    		+ "    }";
+		
 		System.out.println("------------------------------------------------------");
 		System.out.println("Replace item in cart---<<"  + method.getName()+">>" );
 		System.out.println("------------------------------------------------------");
@@ -151,13 +158,9 @@ public class PostMethods extends AccessProperties{
 			writeProperties("ReplacedQuanitity", Integer.toString(quantity));
 			
 			given().spec(requestSpecification).
-				header("Authorization", "Bearer "+ accessToken). 	
+				header("Authorization", bearerToken). 	
 			when().
-			    body("    {\r\n"
-			    		+ "        \"productId\":"+ ReplacedproductID +",\r\n"
-			    		+ "        \"quantity\":"+ quantity + "\r\n"
-			    		+ "    }").
-			    contentType(ContentType.JSON).
+			    body(payload).
 				put("/carts/"+ cartId +"/items/"+ itemId).			
 			then().spec(responseSpecification).
 				assertThat().

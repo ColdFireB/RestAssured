@@ -14,6 +14,8 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
@@ -36,7 +38,8 @@ public class AccessProperties {
 	public static String OrderID;
 	public static String ReplacedproductID;
 	public static String clientName;
-	public static String clientEmail;
+	public static String clientEmail;	
+	public static String bearerToken;
 	
 	public static RequestSpecification requestSpecification;
 	public static ResponseSpecification responseSpecification_200;
@@ -74,7 +77,7 @@ public class AccessProperties {
 			e.printStackTrace();
 		}		
 		
-		requestSpecification = given().
+		/*requestSpecification = given().
 				log().all().
 				baseUri("https://simple-grocery-store-api.glitch.me").
 				contentType(ContentType.JSON);
@@ -89,7 +92,25 @@ public class AccessProperties {
 		responseSpecification = RestAssured.expect().
 				log().all();
 				//log().headers().
-				//log().body();
+				//log().body();*/
+		
+		RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder().
+						setBaseUri("https://simple-grocery-store-api.glitch.me").
+						setContentType(ContentType.JSON).
+						log(LogDetail.ALL);
+		
+		requestSpecification = requestSpecBuilder.build();
+		
+		ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder().
+				log(LogDetail.ALL);
+		
+		responseSpecification = responseSpecBuilder.build();
+		
+		ResponseSpecBuilder responseSpecBuilder_200 = new ResponseSpecBuilder().
+				expectStatusCode(200).
+				log(LogDetail.ALL);
+		
+		responseSpecification_200 = responseSpecBuilder_200.build();
 	}
 	
 	public static void storePropertiesValues(String key) {

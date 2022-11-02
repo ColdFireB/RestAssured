@@ -3,14 +3,11 @@ package com.rest;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 import static org.testng.Assert.assertEquals;
-
 import java.lang.reflect.Method;
-
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-
 import io.restassured.response.Response;
 import utils.AccessProperties;
 
@@ -138,7 +135,7 @@ public class GetMethods extends AccessProperties{
 	@Test(groups = {"CreateOrder"}, priority = 1)
 	public void get_Orders_First() {
 		given().spec(requestSpecification).
-		 	headers("Authorization", "Bearer " + accessToken).
+		 	headers("Authorization", bearerToken).
 		when().
 			get("/Orders").
 		then().spec(responseSpecification_200);
@@ -158,7 +155,7 @@ public class GetMethods extends AccessProperties{
 		}
 		
 		Response res = given().spec(requestSpecification).
-		 	headers("Authorization", "Bearer " + accessToken).
+		 	headers("Authorization", bearerToken).
 		when().
 			get("/Orders").
 		then().spec(responseSpecification_200).
