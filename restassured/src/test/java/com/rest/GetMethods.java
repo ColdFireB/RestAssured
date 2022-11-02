@@ -2,9 +2,16 @@ package com.rest;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
+import static org.testng.Assert.assertEquals;
+
+import java.lang.reflect.Method;
+
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+
+import groovy.cli.Option;
 import io.restassured.response.Response;
 import utils.AccessProperties;
 
@@ -16,7 +23,11 @@ public class GetMethods extends AccessProperties{
 	}
 	
 	@Test(groups = {"Background"},priority = 1)
-	public void get_status() {
+	public void get_status(@Optional Method method) {
+		System.out.println("------------------------------------------------------");
+		System.out.println("-----Get status of the application-------<<" + method.getName()  + ">>");
+		System.out.println("------------------------------------------------------");
+		
 		String status = given().
 		 	baseUri("https://simple-grocery-store-api.glitch.me").
 		when().
@@ -29,12 +40,19 @@ public class GetMethods extends AccessProperties{
 			//body("status", is(equalTo("UP")));
 		//System.out.println("Get status of the API:" res.path("status"));
 		
+		assertEquals(status, "UP");
+		
 		System.out.println("Get status of the API:" + status);
 	}	
 	
 	
 	@Test(groups = {"Background", "AddCart", "ReplaceItem"}, priority = 2)
-	public void get_ListOfProducts() {
+	public void get_ListOfProducts(@Optional Method method) {
+		
+		System.out.println("------------------------------------------------------");
+		System.out.println("------Get list of products---------<<" + method.getName()  + ">>");
+		System.out.println("------------------------------------------------------");
+		
 		productIDs = given().
 		 	baseUri("https://simple-grocery-store-api.glitch.me").
 		when().
@@ -51,16 +69,19 @@ public class GetMethods extends AccessProperties{
 		System.out.println(productIDs);
 		
 		//set any one productID
-		writeProperties("productID", productIDs.get(3).toString());
-		//System.out.println(res.path("id"));
+		writeProperties("productID", productIDs.get(1).toString());
+
 	}	
 	
 	@Test(groups = {"Background"}, priority = 3)
-	public void get_Product() {
+	public void get_Product(@Optional Method method) {
+		System.out.println("------------------------------------------------------");
+		System.out.println("--------Get Product details-----------<<" + method.getName()  + ">>");
+		System.out.println("------------------------------------------------------");
 		given().
 		 	baseUri("https://simple-grocery-store-api.glitch.me").
 		when().
-			get("/products/"+prop.getProperty("productID")).
+			get("/products/"+productID).
 		then().
 		log().all().
 		assertThat().
@@ -70,7 +91,10 @@ public class GetMethods extends AccessProperties{
 	
 
 	@Test(groups = {"ReplaceItem"})
-	public void get_Product_Stock() {
+	public void get_Product_Stock(@Optional Method method) {
+		System.out.println("------------------------------------------------------");
+		System.out.println("--------Get Product's current stock---------<<" + method.getName()  + ">>");
+		System.out.println("------------------------------------------------------");
 		writeProperties("ReplacedproductID", (productIDs.get(4)).toString());
 		Response res = given().
 		 	baseUri("https://simple-grocery-store-api.glitch.me").
@@ -86,7 +110,11 @@ public class GetMethods extends AccessProperties{
 	}
 	
 	@Test(groups= {"AddCart"}, priority = 3, dependsOnMethods = {"com.rest.PostMethods.Add_ItemTo_cart","com.rest.PostMethods.create_cart"})
-	public void get_Cart_items() {
+	public void get_Cart_items(@Optional Method method) {
+		System.out.println("------------------------------------------------------");
+		System.out.println("--------get cart items-----------<<" + method.getName()  + ">>");
+		System.out.println("------------------------------------------------------");
+		
 		Response res = given().
 		 	baseUri("https://simple-grocery-store-api.glitch.me").
 		when().
@@ -103,7 +131,11 @@ public class GetMethods extends AccessProperties{
 	
 	@Parameters({"size"})
 	@Test(groups= {"AddCart"}, priority = 4, dependsOnMethods = {"com.rest.PostMethods.Add_ItemTo_cart","com.rest.PostMethods.create_cart"})
-	public void get_Cart_using_CartID(int size) {
+	public void get_Cart_using_CartID(int size, @Optional Method method) {
+		System.out.println("------------------------------------------------------");
+		System.out.println("--------Get cart using CartID-----------<<" + method.getName()  + ">>");
+		System.out.println("------------------------------------------------------");
+		
 		Response res = given().
 		 	baseUri("https://simple-grocery-store-api.glitch.me").
 		when().
@@ -131,9 +163,9 @@ public class GetMethods extends AccessProperties{
 		statusCode(200);
 	}
 	
-	@Parameters({"clientname", "replaced_product"})
+	@Parameters({"replaced_product"})
 	@Test(dependsOnMethods = "com.rest.PostMethods.create_new_order", groups = {"CreateOrder"}, priority = 3)
-	public void get_Orders_After_ItemAdded(String name, boolean replaced_product) {
+	public void get_Orders_After_ItemAdded(boolean replaced_product) {
 		int id;
 		if(replaced_product) {
 			System.out.println("product is replaced");
@@ -153,7 +185,7 @@ public class GetMethods extends AccessProperties{
 		log().all().
 		assertThat().
 		statusCode(200).
-		body("customerName", hasItem(name),
+		body("customerName", hasItem(clientName),
 				"items[0].productId[0]", is(equalTo(id))).extract().response();
 		
 		System.out.println(res.path("items[0].productId[0]"));

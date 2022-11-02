@@ -4,7 +4,10 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.lang.reflect.Method;
+
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -16,11 +19,16 @@ public class PostMethods extends AccessProperties{
 	
 	@BeforeClass
 	public void beforeClass() {
-		System.out.println("Executing before class method" + getClass());
+		System.out.println("------------------------------------------------------");
+		System.out.println("Executing beforeclass method");
+		System.out.println("------------------------------------------------------");
 	}
 	
 	@Test(groups = {"NegativieScenario"})
-	public void register_ExistingAPI_Client() {
+	public void register_ExistingAPI_Client(@Optional Method method) {
+		System.out.println("------------------------------------------------------");
+		System.out.println("--------Register Existing API-----------<<" + method.getName()  + ">>");
+		System.out.println("------------------------------------------------------");
 		given().
 			log().all().
 		 	baseUri("https://simple-grocery-store-api.glitch.me").
@@ -38,16 +46,20 @@ public class PostMethods extends AccessProperties{
 		body("error", is(equalTo("API client already registered. Try a different email.")));
 	}
 	
-	@Parameters({"clientname", "clientmail"})
+
 	@Test(groups = {"Background"}, priority = 4)
-	public void register_newAPI_Client(String name, String mailid) {
+	public void register_newAPI_Client(@Optional Method method) {
+		System.out.println("------------------------------------------------------");
+		System.out.println("Register NEW API Client--Invoking Method---<<"  + method.getName()+">>" );
+		System.out.println("------------------------------------------------------");
+		
 		Response res = given().
 			log().all().
 		 	baseUri("https://simple-grocery-store-api.glitch.me").
 		 	contentType(ContentType.JSON).
 		 	body("{\r\n"
-		 			+ "   \"clientName\": \""+name +"\",\r\n"
-		 			+ "   \"clientEmail\":\""+ mailid+"\"\r\n"
+		 			+ "   \"clientName\": \""+clientName +"\",\r\n"
+		 			+ "   \"clientEmail\":\""+ clientEmail+"\"\r\n"
 		 			+ "}").
 		when().
 			post("/api-clients").
@@ -61,7 +73,11 @@ public class PostMethods extends AccessProperties{
 	}
 	
 	@Test(groups= {"AddCart"}, priority = 1)
-	public void create_cart() {
+	public void create_cart(@Optional Method method) {
+		
+		System.out.println("------------------------------------------------------");
+		System.out.println("Create Cart---<<"  + method.getName()+">>" );
+		System.out.println("------------------------------------------------------");
 		Response res = given().
 			log().all().
 		 	baseUri("https://simple-grocery-store-api.glitch.me").
@@ -78,7 +94,12 @@ public class PostMethods extends AccessProperties{
 	}
 	
 	@Test(dependsOnMethods = "com.rest.GetMethods.get_ListOfProducts",groups= {"AddCart"}, priority = 2)
-	public void Add_ItemTo_cart() {
+	public void Add_ItemTo_cart(@Optional Method method) {
+		
+		System.out.println("------------------------------------------------------");
+		System.out.println("Add new Item to the cart---<<"  + method.getName()+">>" );
+		System.out.println("------------------------------------------------------");
+		
 		writeProperties("productID", (productIDs.get(1)).toString());
 		
 		Response res = given().
@@ -103,9 +124,13 @@ public class PostMethods extends AccessProperties{
 	}
 	
 	
-	@Parameters({"clientname"})
 	@Test(groups = {"CreateOrder"}, priority = 2)
-	public void create_new_order(String name) {
+	public void create_new_order(@Optional Method method) {
+		
+		System.out.println("------------------------------------------------------");
+		System.out.println("Create New Order---<<"  + method.getName()+">>" );
+		System.out.println("------------------------------------------------------");
+		
 		Response res = given().
 			log().all().
 			header("Authorization", "Bearer "+ accessToken).
@@ -114,7 +139,7 @@ public class PostMethods extends AccessProperties{
 		when().
 		    body("{\r\n"
 		    		+ "    \"cartId\":"+ "\"" + cartId +"\""+",\r\n"
-		    		+ "    \"customerName\":" +"\"" +name+ "\"" + "\r\n"
+		    		+ "    \"customerName\":" +"\"" +clientName+ "\"" + "\r\n"
 		    		+ "}").
 		    contentType(ContentType.JSON).
 			post("/Orders").			
@@ -131,7 +156,11 @@ public class PostMethods extends AccessProperties{
 	
 	@Parameters({"quantity"})
 	@Test(groups = {"ReplaceItem"}, dependsOnMethods = {"com.rest.GetMethods.get_ListOfProducts", "com.rest.GetMethods.get_Product_Stock"})
-	public void replace_item_inCart(int quantity) {
+	public void replace_item_inCart(int quantity, @Optional Method method) {
+		
+		System.out.println("------------------------------------------------------");
+		System.out.println("Replace item in cart---<<"  + method.getName()+">>" );
+		System.out.println("------------------------------------------------------");
 		
 		int quantity_prop = Integer.parseInt(ReplacedProduct_Stock);
 		if(quantity<=quantity_prop) {

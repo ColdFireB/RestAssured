@@ -1,3 +1,9 @@
 /.metadata
 
 /metadata
+
+*/test-output
+
+*/.settings
+
+*/.classpath
