@@ -186,8 +186,7 @@ public class PostMethods extends AccessProperties{
 			
 			given().spec(requestSpecification).
 				header("Authorization", bearerToken).
-				pathParam("cartid", cartId).
-				pathParam("itemid", itemId).
+				pathParams("cartid", cartId, "itemid", itemId).
 			when().
 			    body(product).
 				put("/carts/{cartid}/items/{itemid}").			
