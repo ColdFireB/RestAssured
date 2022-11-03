@@ -72,8 +72,9 @@ public class GetMethods extends AccessProperties{
 		System.out.println("--------Get Product details-----------<<" + method.getName()  + ">>");
 		System.out.println("------------------------------------------------------");
 		given().spec(requestSpecification).
+		pathParam("ProductID", productID).
 		when().
-			get("/products/"+productID).
+			get("/products/{ProductID}").
 		then().spec(responseSpecification_200).
 		assertThat().
 			body("id", is(equalTo(Integer.parseInt(productID))));
@@ -87,8 +88,9 @@ public class GetMethods extends AccessProperties{
 		System.out.println("------------------------------------------------------");
 		writeProperties("ReplacedproductID", (productIDs.get(4)).toString());
 		Response res = given().spec(requestSpecification).
+				pathParam("replacedProductID", ReplacedproductID).
 		when().
-			get("/products/"+ ReplacedproductID).
+			get("/products/{replacedProductID}").
 		then().spec(responseSpecification_200).
 		assertThat().
 			body("id", is(equalTo(Integer.parseInt(ReplacedproductID)))).extract().response();
@@ -103,8 +105,9 @@ public class GetMethods extends AccessProperties{
 		System.out.println("------------------------------------------------------");
 		
 		Response res = given().spec(requestSpecification).
+				pathParam("cartID", cartId).
 		when().
-			get("/carts/"+ cartId +"/items").
+			get("/carts/{cartID}/items").
 		then().spec(responseSpecification_200).
 		assertThat().
 		extract().response();
@@ -122,8 +125,9 @@ public class GetMethods extends AccessProperties{
 		System.out.println("------------------------------------------------------");
 		
 		Response res = given().spec(requestSpecification).
+				pathParam("cartID" , cartId ).
 		when().
-			get("/carts/"+ cartId).
+			get("/carts/{cartID}").
 		then().spec(responseSpecification_200).
 		assertThat().
 		body("items", hasSize(size)). 

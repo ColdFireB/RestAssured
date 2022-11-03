@@ -116,9 +116,10 @@ public class PostMethods extends AccessProperties{
 		writeProperties("productID", (productIDs.get(1)).toString());
 		
 		Response res = given().spec(requestSpecification).
+				pathParam("cartid", cartId).
 		when().
 		    body(prod).
-			post("/carts/"+ cartId + "/items").
+			post("/carts/{cartid}/items").
 			
 		then().spec(responseSpecification).
 			assertThat().
@@ -184,10 +185,12 @@ public class PostMethods extends AccessProperties{
 			writeProperties("ReplacedQuanitity", Integer.toString(quantity));
 			
 			given().spec(requestSpecification).
-				header("Authorization", bearerToken). 	
+				header("Authorization", bearerToken).
+				pathParam("cartid", cartId).
+				pathParam("itemid", itemId).
 			when().
 			    body(product).
-				put("/carts/"+ cartId +"/items/"+ itemId).			
+				put("/carts/{cartid}/items/{itemid}").			
 			then().spec(responseSpecification).
 				assertThat().
 				statusCode(204);	
