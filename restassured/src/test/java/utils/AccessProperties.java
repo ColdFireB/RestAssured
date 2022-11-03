@@ -1,7 +1,5 @@
 package utils;
 
-import static io.restassured.RestAssured.given;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,11 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Random;
-
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
-
-import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.filter.log.LogDetail;

@@ -60,5 +60,16 @@
 			<class name="com.rest.PostMethods"></class>
 		</classes>
 	</test>
+	
+		<test name="negative_scenario">
+		<groups>
+			<run>
+				<include name="NegativieScenario" />
+			</run>
+		</groups>
+		<classes>
+			<class name="com.rest.PostMethods"></class>
+		</classes>
+	</test>
 
 </suite> 
