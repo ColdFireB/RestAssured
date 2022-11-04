@@ -11,6 +11,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.*;
 import io.restassured.response.Response;
 import utils.AccessProperties;
 
@@ -26,11 +29,14 @@ public class PostMethods extends AccessProperties{
 	}
 	
 	@Test(groups = {"NegativieScenario"})
-	public void register_ExistingAPI_Client(@Optional Method method) {
+	public void register_ExistingAPI_Client(@Optional Method method) throws JsonProcessingException {
 		
 		HashMap<String, String> auth = new HashMap<>();
 		auth.put("clientName", "Bala");
 		auth.put("clientEmail", "balaece1991@gmail.com");
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		String payload = objectMapper.writeValueAsString(auth);
 		
 		/*String payload = "{\r\n"
 	 			+ "   \"clientName\": \"Bala\",\r\n"
@@ -40,7 +46,7 @@ public class PostMethods extends AccessProperties{
 		System.out.println("--------Register Existing API-----------<<" + method.getName()  + ">>");
 		System.out.println("------------------------------------------------------");
 		given().spec(requestSpecification).
-		 	body(auth).
+		 	body(payload).
 		when().
 			post("/api-clients").
 		then().spec(responseSpecification).
@@ -51,7 +57,7 @@ public class PostMethods extends AccessProperties{
 	
 
 	@Test(groups = {"Background"}, priority = 4)
-	public void register_newAPI_Client(@Optional Method method) {
+	public void register_newAPI_Client(@Optional Method method) throws JsonProcessingException {
 		
 		/*String payload = "{\r\n"
 	 			+ "   \"clientName\": \""+clientName +"\",\r\n"
@@ -66,8 +72,11 @@ public class PostMethods extends AccessProperties{
 		auth.put("clientName", clientName);
 		auth.put("clientEmail",clientEmail);
 		
+		ObjectMapper objectMapper = new ObjectMapper();
+		String payload = objectMapper.writeValueAsString(auth);
+		
 		Response res =  given().spec(requestSpecification).
-		 	body(auth).
+		 	body(payload).
 		when().
 			post("/api-clients").
 		then().spec(responseSpecification).
@@ -100,7 +109,7 @@ public class PostMethods extends AccessProperties{
 	}
 	
 	@Test(dependsOnMethods = "com.rest.GetMethods.get_ListOfProducts",groups= {"AddCart"}, priority = 2)
-	public void Add_ItemTo_cart(@Optional Method method) {
+	public void Add_ItemTo_cart(@Optional Method method) throws JsonProcessingException {
 		
 		/*String payload = "{\r\n"
 				+ "   \"productId\":" +productIDs.get(1)+"\r\n"
@@ -113,12 +122,15 @@ public class PostMethods extends AccessProperties{
 		HashMap<String, Integer> prod = new HashMap<>();
 		prod.put("productId", productIDs.get(1));
 		
+		ObjectMapper objectMapper = new ObjectMapper();
+		String payload = objectMapper.writeValueAsString(prod);
+		
 		writeProperties("productID", (productIDs.get(1)).toString());
 		
 		Response res = given().spec(requestSpecification).
 				pathParam("cartid", cartId).
 		when().
-		    body(prod).
+		    body(payload).
 			post("/carts/{cartid}/items").
 			
 		then().spec(responseSpecification).
@@ -133,7 +145,7 @@ public class PostMethods extends AccessProperties{
 	
 	
 	@Test(groups = {"CreateOrder"}, priority = 2)
-	public void create_new_order(@Optional Method method) {
+	public void create_new_order(@Optional Method method) throws JsonProcessingException {
 		
 		/*String payload = "{\r\n"
 	    		+ "    \"cartId\":"+ "\"" + cartId +"\""+",\r\n"
@@ -148,10 +160,13 @@ public class PostMethods extends AccessProperties{
 		cart_details.put("cartId", cartId);
 		cart_details.put("customerName", clientName);
 		
+		ObjectMapper objectMapper = new ObjectMapper();
+		String payload = objectMapper.writeValueAsString(cart_details);
+		
 		Response res = given().spec(requestSpecification).
 			header("Authorization", bearerToken).
 		when().
-		    body(cart_details).
+		    body(payload).
 			post("/Orders").			
 		then().spec(responseSpecification).
 			assertThat().
@@ -165,7 +180,7 @@ public class PostMethods extends AccessProperties{
 	
 	@Parameters({"quantity"})
 	@Test(groups = {"ReplaceItem"}, dependsOnMethods = {"com.rest.GetMethods.get_ListOfProducts", "com.rest.GetMethods.get_Product_Stock"})
-	public void replace_item_inCart(int quantity, @Optional Method method) {
+	public void replace_item_inCart(int quantity, @Optional Method method) throws JsonProcessingException {
 		
 		/*String payload = "    {\r\n"
 	    		+ "        \"productId\":"+ ReplacedproductID +",\r\n"
@@ -180,6 +195,9 @@ public class PostMethods extends AccessProperties{
 		product.put("productId", ReplacedproductID);
 		product.put("quantity", quantity);
 		
+		ObjectMapper objectMapper = new ObjectMapper();
+		String payload = objectMapper.writeValueAsString(product);
+		
 		int quantity_prop = Integer.parseInt(ReplacedProduct_Stock);
 		if(quantity<=quantity_prop) {
 			writeProperties("ReplacedQuanitity", Integer.toString(quantity));
@@ -188,7 +206,7 @@ public class PostMethods extends AccessProperties{
 				header("Authorization", bearerToken).
 				pathParams("cartid", cartId, "itemid", itemId).
 			when().
-			    body(product).
+			    body(payload).
 				put("/carts/{cartid}/items/{itemid}").			
 			then().spec(responseSpecification).
 				assertThat().
