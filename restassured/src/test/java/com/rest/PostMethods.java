@@ -14,6 +14,8 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.restassured.response.Response;
 import utils.AccessProperties;
 
@@ -191,11 +193,11 @@ public class PostMethods extends AccessProperties{
 		System.out.println("Replace item in cart---<<"  + method.getName()+">>" );
 		System.out.println("------------------------------------------------------");
 		
-		HashMap<String, Object> product = new HashMap<>();
-		product.put("productId", ReplacedproductID);
-		product.put("quantity", quantity);
-		
 		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectNode product = objectMapper.createObjectNode();
+		product.put("productId", ReplacedproductID);
+		product.put("quantity", quantity);	
+		
 		String payload = objectMapper.writeValueAsString(product);
 		
 		int quantity_prop = Integer.parseInt(ReplacedProduct_Stock);
